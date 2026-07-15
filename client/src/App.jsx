@@ -10,8 +10,8 @@ import Inventory from './pages/Inventory/Inventory';
 import CarDetails from './pages/CarDetails/CarDetails';
 import Login from './pages/Login/Login';
 import Admin from './pages/Admin/Admin';
-import About from './pages/About/About';       // <-- NEW
-import Contact from './pages/Contact/Contact'; // <-- NEW
+import About from './pages/About/About';
+import Contact from './pages/contact/Contact';
 
 import './App.css';
 
