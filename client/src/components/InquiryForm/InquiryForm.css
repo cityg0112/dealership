@@ -1,0 +1,82 @@
+.inquiry-section {
+  background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 35px;
+  border-radius: 15px;
+  margin-top: 40px;
+  border: 1px solid #e9ecef;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.inquiry-section h3 {
+  font-size: 1.6rem;
+  margin-bottom: 10px;
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.inquiry-section p {
+  color: #666;
+  margin-bottom: 30px;
+  font-size: 1.05rem;
+}
+
+.inquiry-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.inquiry-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 24px;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.inquiry-btn .icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* WhatsApp Button Styling */
+.whatsapp-btn {
+  background-color: #25D366;
+  color: white;
+}
+
+.whatsapp-btn:hover {
+  background-color: #128C7E;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+}
+
+/* Email Button Styling */
+.email-btn {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  color: white;
+}
+
+.email-btn:hover {
+  background: linear-gradient(135deg, #daa428 0%, #e63e00 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 69, 0, 0.4);
+}
+
+/* Responsive: Side-by-side on larger screens */
+@media (min-width: 600px) {
+  .inquiry-buttons {
+    flex-direction: row;
+  }
+  
+  .inquiry-btn {
+    flex: 1;
+  }
+}

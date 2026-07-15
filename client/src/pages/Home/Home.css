@@ -1,0 +1,267 @@
+.home{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hero Section */
+.hero {
+  background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+              url('https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1920&q=80');
+  /* Note: The URL above is a placeholder car image from Unsplash. It will load from the internet. */
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  width: 100%;
+}
+
+.hero-overlay {
+  width: 100%;
+  max-width: 1248px;
+  display: flex;
+  align-items: center;  
+  justify-content: flex-start;
+  padding-block: 8rem;
+}
+
+.hero-content {
+  max-width: 800px;
+  padding: 20px;
+  text-align: left;
+}
+
+.heroDiv{
+  width: fit-content;
+  font-size: 0.8rem;
+  margin-bottom: 10px;
+  color: #DAA428;
+  border: 1px solid #DAA428;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 3px 1rem;
+  letter-spacing: 2px;
+  border-radius: 1.2rem;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.hero-content p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.hero-btn {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: #daa428;
+  color: #000;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 5rem;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.hero-btn:hover {
+  background-color: none;
+  border: 2px solid #daa428;
+  transform: translateY(-2px);
+}
+
+.hero-search{
+  width:24%;
+  padding: 0.8rem 1rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  background-color: #0b0b0b;
+  color: #fff;
+}
+
+.search-btn{
+  color: #000;
+  background-color: #daa428;
+  border: none;
+}
+
+.search-btn:hover{
+  color: #daa428;
+  background-color: #0b0b0b;
+  border: 1px solid #daa428;
+}
+
+/* =========================================
+   Featured Vehicles Section
+   ========================================= */
+/* =========================================
+   Featured Vehicles Section
+   ========================================= */
+.featured-section {
+  padding: 80px 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.section-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #f2f2f2;
+  margin-bottom: 15px;
+  letter-spacing: -1px;
+}
+
+.section-header p {
+  color: #a0a0a0;
+  font-size: 1.1rem;
+}
+
+/* NEW: Smart Grid Logic (Same as Inventory) */
+.featured-grid {
+  display: grid;
+  gap: 35px;
+  width: 100%;
+  max-width: 1248px;
+  margin-bottom: 3rem;
+  
+  /* DEFAULT: 4 or more cars (~24% width each) */
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* EXACTLY 1 car (100% width) */
+.featured-grid:has(> :only-child) {
+  grid-template-columns: 1fr;
+}
+
+/* EXACTLY 2 cars (~49% width each) */
+.featured-grid:has(> :nth-child(2):last-child) {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+/* EXACTLY 3 cars (~32% width each) */
+.featured-grid:has(> :nth-child(3):last-child) {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* =========================================
+   RESPONSIVE FALLBACKS (For Tablets & Mobile)
+   ========================================= */
+/* On tablets, max 3 per row */
+@media (max-width: 1200px) {
+  .featured-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* On small tablets, max 2 per row */
+@media (max-width: 900px) {
+  .featured-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* On mobile, always 1 per row */
+@media (max-width: 600px) {
+  .featured-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.featured-cta {
+  text-align: center;
+}
+
+.view-all-btn {
+  display: inline-block;
+  padding: 16px 40px;
+  background: #daa428;
+  color: #0b0b0b;
+  text-decoration: none;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.view-all-btn:hover {
+  background: #0b0b0b;
+  border: 2px solid #daa428;
+  color: #daa428;
+}
+
+/* Features Section */
+.features {
+  padding: 80px 20px;
+  text-align: center;
+  background-color: #0b0b0b;
+}
+
+.features h2 {
+  font-size: 2.5rem;
+  margin-bottom: 50px;
+  color: #fff;
+}
+
+.features-grid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background-color: #0b0b0b;
+  padding: 40px 30px;
+  border-radius: 10px;
+  flex: 1;
+  min-width: 24%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  transition: transform 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+}
+
+.feature-card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: #daa428;
+}
+
+.feature-card p {
+  color: #666;
+  line-height: 1.6;
+}
+
+
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  .section-header h2 {
+    font-size: 2rem;
+  }
+  
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+}

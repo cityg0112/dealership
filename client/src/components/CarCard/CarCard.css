@@ -1,0 +1,151 @@
+.car-card-luxury {
+  background: var(--bg-secondary);
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 10px 40px var(--shadow-color);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+
+.car-card-luxury:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 60px rgba(255, 69, 0, 0.15);
+  border-color: var(--accent-color);
+}
+
+.car-card-content {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.car-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.car-card-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 5px 0;
+  letter-spacing: -0.5px;
+}
+
+.car-card-company {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.car-card-price-tag {
+  text-align: right;
+  background: var(--bg-tertiary);
+  padding: 12px 18px;
+  border-radius: 12px;
+  color: white;
+}
+
+.price-label {
+  display: block;
+  font-size: 0.75rem;
+  opacity: 0.8;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.price-value {
+  display: block;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-top: 2px;
+}
+
+.car-card-specs-grid {
+  display: grid;
+  /* 'auto' fits the first column to its content, '1fr' lets the second column fill the rest */
+  grid-template-columns: auto 1fr; 
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+@media (max-width: 600px) {
+  .car-card-specs-grid {
+    grid-template-columns: 1fr; /* Stacks to 1 column on mobile for readability */
+  }
+}
+
+.spec-badge {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.spec-badge:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 69, 0, 0.1);
+}
+
+.spec-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.spec-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.spec-value {
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+.spec-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.car-card-cta {
+ display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+
+.car-card-cta .arrow {
+  transition: transform 0.3s ease;
+}
+
+.car-card-cta:hover .arrow {
+  transform: translateX(4px);
+}
+
+.car-card-price{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}

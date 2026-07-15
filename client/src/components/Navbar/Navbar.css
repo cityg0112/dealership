@@ -1,0 +1,198 @@
+/* =========================================
+   Navbar Base Styles
+   ========================================= */
+.navbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px 20px;
+  background-color: color-mix(in srgb, var(--bg-secondary) 85%, transparent);
+  backdrop-filter: blur(10px);
+  color: var(--text-primary);
+  box-shadow: 0 4px 20px var(--shadow-color);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1248px;
+}
+
+.navbar-logo a {
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-logo a:hover {
+  opacity: 0.8;
+}
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.navbar-links a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+.navbar-links a:hover {
+  color: #DAA428;
+}
+
+/* Sleek underline animation on hover */
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background-color: #DAA428;
+  transition: width 0.3s ease;
+}
+
+.navbar-links a:hover::after {
+  width: 100%;
+}
+
+/* =========================================
+   Button Styles
+   ========================================= */
+.nav-btn {
+  padding: 0.6rem 1.7rem;
+  line-height: 1;
+  border-radius: 3rem;
+  border: 1px solid #DAA428;
+  background: transparent;
+  color: #DAA428;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.nav-btn:hover {
+  background: #DAA428;
+  color: #000;
+}
+
+.logout-btn {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.logout-btn:hover {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+}
+
+/* =========================================
+   Hamburger Menu (Hidden on Desktop)
+   ========================================= */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  z-index: 1001;
+}
+
+.hamburger .bar {
+  width: 25px;
+  height: 3px;
+  background-color: var(--text-primary);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+/* Hamburger Animation to 'X' */
+.hamburger .bar.open:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.hamburger .bar.open:nth-child(2) {
+  opacity: 0;
+}
+.hamburger .bar.open:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Hide desktop button on mobile, show mobile action */
+.mobile-action {
+  display: none;
+}
+
+/* =========================================
+   Responsive Design (600px and lower)
+   ========================================= */
+@media (max-width: 600px) {
+  .navbar {
+    padding: 15px 20px;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .desktop-action {
+    display: none;
+  }
+
+  .mobile-action {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .navbar-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-secondary);
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    padding: 30px 0;
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 10px 30px var(--shadow-color);
+    
+    /* Hidden by default with smooth transition */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+  }
+
+  .navbar-links.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  /* Remove underline animation on mobile for a cleaner touch experience */
+  .navbar-links a::after {
+    display: none;
+  }
+}

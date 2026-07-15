@@ -1,0 +1,40 @@
+/* =========================================
+   LUXURY DARK MODE THEME VARIABLES
+   ========================================= */
+:root {
+  --bg-primary: #0f0f0f;       /* Deep black for main background */
+  --bg-secondary: #1a1a1a;     /* Slightly lighter for cards, nav, forms */
+  --bg-tertiary: #252525;      /* For inputs, hover states */
+  --text-primary: #ffffff;     /* Main text */
+  --text-secondary: #a0a0a0;   /* Muted text, subtitles */
+  --accent-color: #daa428;     /* Brand Orange/Red */
+  --accent-hover: #e63e00;     /* Darker orange for hover */
+  --border-color: #333333;     /* Subtle borders */
+  --shadow-color: rgba(0, 0, 0, 0.5); /* Darker shadows */
+}
+
+/* =========================================
+   GLOBAL RESET & BASE STYLES
+   ========================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
