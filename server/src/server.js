@@ -22,6 +22,15 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/cars', carsRoutes);
 app.use('/api/upload', uploadRoutes);
 
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'LOOP AUTOCAT Motors API is running!',
+    endpoints: ['/api/health', '/api/cars', '/api/upload']
+  });
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.json({
