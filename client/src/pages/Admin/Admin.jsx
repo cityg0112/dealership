@@ -15,15 +15,13 @@ const Admin = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [formData, setFormData] = useState({
-    company: '', bodyType: '', name: '', price: '',
+    company: '', bodyType: '', name: '', year: '', price: '',
     cc: '', hp: '', engineType: '', mileage: '',
     fuelType: '', transmission: '', description: ''
   });
 
-  // Image state: array of objects to handle both URLs and Files
   const [images, setImages] = useState([]);
 
-  // Extract unique options from existing cars for dynamic datalists
   const uniqueOptions = useMemo(() => {
     const companies = [...new Set(cars.map(car => car.company).filter(Boolean))];
     const bodyTypes = [...new Set(cars.map(car => car.bodyType).filter(Boolean))];
@@ -40,7 +38,7 @@ const Admin = () => {
 
   const resetForm = () => {
     setFormData({
-      company: '', bodyType: '', name: '', price: '',
+      company: '', bodyType: '', name: '', year: '', price: '',
       cc: '', hp: '', engineType: '', mileage: '',
       fuelType: '', transmission: '', description: ''
     });
@@ -52,7 +50,6 @@ const Admin = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- IMAGE HANDLING LOGIC ---
   const addImageSlot = () => {
     setImages([...images, {
       id: Date.now() + Math.random(),
@@ -75,19 +72,13 @@ const Admin = () => {
 
   const handleFileUpload = async (id, file) => {
     if (!file) return;
-
     const preview = URL.createObjectURL(file);
     updateImageSlot(id, { file, preview, status: 'uploading' });
-
     const formDataUpload = new FormData();
     formDataUpload.append('images', file);
-
     try {
-      const response = await api.post('/upload', formDataUpload, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      const serverPath = response.data.images[0];
-      updateImageSlot(id, { path: serverPath, status: 'success' });
+      const response = await api.post('/upload', formDataUpload, { headers: { 'Content-Type': 'multipart/form-data' } });
+      updateImageSlot(id, { path: response.data.images[0], status: 'success' });
     } catch (error) {
       console.error('Upload failed:', error);
       updateImageSlot(id, { status: 'error' });
@@ -96,40 +87,27 @@ const Admin = () => {
 
   const retryUpload = async (imgObj) => {
     updateImageSlot(imgObj.id, { status: 'uploading' });
-
     const formDataUpload = new FormData();
     formDataUpload.append('images', imgObj.file);
-
     try {
-      const response = await api.post('/upload', formDataUpload, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-      const serverPath = response.data.images[0];
-      updateImageSlot(imgObj.id, { path: serverPath, status: 'success' });
+      const response = await api.post('/upload', formDataUpload, { headers: { 'Content-Type': 'multipart/form-data' } });
+      updateImageSlot(imgObj.id, { path: response.data.images[0], status: 'success' });
     } catch (error) {
       console.error('Retry failed:', error);
       updateImageSlot(imgObj.id, { status: 'error' });
     }
   };
 
-  // --- FORM SUBMISSION ---
   const handleEdit = (car) => {
     setEditingId(car.id);
     setFormData({
-      company: car.company, bodyType: car.bodyType, name: car.name, price: car.price,
+      company: car.company, bodyType: car.bodyType, name: car.name, year: car.year || '', price: car.price,
       cc: car.cc, hp: car.hp, engineType: car.engineType, mileage: car.mileage,
       fuelType: car.fuelType, transmission: car.transmission, description: car.description
     });
-
-    // Normalize existing images and use getImageUrl so they display correctly
     const normalizedImages = car.images.map((imgUrl, index) => ({
-      id: Date.now() + index,
-      mode: 'url',
-      urlValue: imgUrl,
-      file: null,
-      preview: getImageUrl(imgUrl), 
-      path: imgUrl,
-      status: 'success'
+      id: Date.now() + index, mode: 'url', urlValue: imgUrl, file: null,
+      preview: getImageUrl(imgUrl), path: imgUrl, status: 'success'
     }));
     setImages(normalizedImages);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -137,9 +115,7 @@ const Admin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const hasErrors = images.some(img => img.status === 'error' || img.status === 'uploading');
-    if (hasErrors) {
+    if (images.some(img => img.status === 'error' || img.status === 'uploading')) {
       alert('Please wait for all uploads to finish, or retry/remove failed images.');
       return;
     }
@@ -147,15 +123,13 @@ const Admin = () => {
       alert('Please add at least one image (URL or Upload).');
       return;
     }
-
     setIsSubmitting(true);
 
-    const finalImageUrls = images.map(img =>
-      img.mode === 'url' ? img.urlValue : img.path
-    ).filter(Boolean);
+    const finalImageUrls = images.map(img => img.mode === 'url' ? img.urlValue : img.path).filter(Boolean);
 
     const carData = {
       ...formData,
+      year: parseInt(formData.year), // <-- SAVES YEAR AS NUMBER
       price: parseFloat(formData.price),
       cc: parseInt(formData.cc),
       hp: parseInt(formData.hp),
@@ -187,7 +161,6 @@ const Admin = () => {
       </div>
 
       <div className="admin-layout">
-        {/* LEFT SIDE: Add/Edit Car Form */}
         <div className="admin-form-section">
           <h2>{editingId ? 'Edit Vehicle' : 'Add New Vehicle'}</h2>
           <form onSubmit={handleSubmit} className="admin-form">
@@ -210,9 +183,15 @@ const Admin = () => {
               <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="e.g. Land Cruiser" required />
             </div>
 
+            {/* YEAR FIELD ADDED HERE */}
+            <div className="form-group">
+              <label>Year of Manufacture</label>
+              <input type="number" name="year" value={formData.year} onChange={handleChange} placeholder="e.g. 2022" min="1990" max="2030" required />
+            </div>
+
             <div className="form-row">
               <div className="form-group">
-                <label>Price ($)</label>
+                <label>Price (KES)</label>
                 <input type="number" name="price" value={formData.price} onChange={handleChange} required />
               </div>
               <div className="form-group">
@@ -251,40 +230,22 @@ const Admin = () => {
               <datalist id="transmissions-list">{uniqueOptions.transmissions.map(opt => <option key={opt} value={opt} />)}</datalist>
             </div>
 
-            {/* --- DYNAMIC IMAGE UPLOAD SECTION --- */}
             <div className="form-group">
               <label>Vehicle Images ({images.filter(img => img.status === 'success').length} added)</label>
-
               {images.map((img) => (
                 <div key={img.id} className="image-input-row">
                   <div className="image-mode-toggle">
-                    <label>
-                      <input type="radio" name={`mode-${img.id}`} checked={img.mode === 'url'} onChange={() => updateImageSlot(img.id, { mode: 'url' })} /> URL
-                    </label>
-                    <label>
-                      <input type="radio" name={`mode-${img.id}`} checked={img.mode === 'file'} onChange={() => updateImageSlot(img.id, { mode: 'file' })} /> Upload File
-                    </label>
+                    <label><input type="radio" name={`mode-${img.id}`} checked={img.mode === 'url'} onChange={() => updateImageSlot(img.id, { mode: 'url' })} /> URL</label>
+                    <label><input type="radio" name={`mode-${img.id}`} checked={img.mode === 'file'} onChange={() => updateImageSlot(img.id, { mode: 'file' })} /> Upload File</label>
                   </div>
-
                   <div className="image-input-content">
                     {img.mode === 'url' ? (
-                      <input
-                        type="url"
-                        placeholder="https://example.com/image.jpg"
-                        value={img.urlValue}
-                        onChange={(e) => updateImageSlot(img.id, { urlValue: e.target.value, preview: e.target.value, status: 'success' })}
-                      />
+                      <input type="url" placeholder="https://example.com/image.jpg" value={img.urlValue} onChange={(e) => updateImageSlot(img.id, { urlValue: e.target.value, preview: e.target.value, status: 'success' })} />
                     ) : (
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(img.id, e.target.files[0])}
-                        disabled={img.status === 'uploading'}
-                      />
+                      <input type="file" accept="image/*" onChange={(e) => handleFileUpload(img.id, e.target.files[0])} disabled={img.status === 'uploading'} />
                     )}
                     <button type="button" className="remove-image-btn" onClick={() => removeImage(img.id)}>✕</button>
                   </div>
-
                   <div className="image-preview-container">
                     {img.status === 'uploading' && <span className="status-badge uploading">Uploading...</span>}
                     {img.status === 'error' && (
@@ -293,16 +254,11 @@ const Admin = () => {
                         <button type="button" className="retry-btn" onClick={() => retryUpload(img)}>🔄 Retry</button>
                       </>
                     )}
-                    {img.preview && (
-                      <img src={img.preview} alt="Preview" className="image-preview-thumb" />
-                    )}
+                    {img.preview && <img src={img.preview} alt="Preview" className="image-preview-thumb" />}
                   </div>
                 </div>
               ))}
-
-              <button type="button" className="add-image-btn" onClick={addImageSlot}>
-                + Add Another Image
-              </button>
+              <button type="button" className="add-image-btn" onClick={addImageSlot}>+ Add Another Image</button>
             </div>
 
             <div className="form-group">
@@ -311,9 +267,7 @@ const Admin = () => {
             </div>
 
             <div className="form-actions">
-              {editingId && (
-                <button type="button" className="cancel-btn" onClick={resetForm}>Cancel Edit</button>
-              )}
+              {editingId && <button type="button" className="cancel-btn" onClick={resetForm}>Cancel Edit</button>}
               <button type="submit" className="admin-submit-btn" disabled={isSubmitting}>
                 {isSubmitting ? 'Saving...' : (editingId ? 'Update Vehicle' : 'Add Vehicle')}
               </button>
@@ -321,7 +275,6 @@ const Admin = () => {
           </form>
         </div>
 
-        {/* RIGHT SIDE: Current Inventory List */}
         <div className="admin-list-section">
           <h2>Current Inventory ({cars.length})</h2>
           <div className="admin-car-list">
@@ -330,8 +283,8 @@ const Admin = () => {
                 <img src={getImageUrl(car.images[0])} alt={car.name} className="admin-car-img" />
                 <div className="admin-car-info">
                   <h4>{car.name}</h4>
-                  <p>{car.company} • {car.bodyType} • {car.engineType}</p>
-                  <span className="admin-car-price">${car.price.toLocaleString()}</span>
+                  <p>{car.company} • {car.bodyType} • {car.year}</p>
+                  <span className="admin-car-price">KES{car.price.toLocaleString()}</span>
                 </div>
                 <div className="admin-car-actions">
                   <button className="edit-btn" onClick={() => handleEdit(car)}>Edit</button>

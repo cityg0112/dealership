@@ -11,7 +11,7 @@ const CarCard = ({ car }) => {
       <div className="car-card-content">
         <div className="car-card-header">
           <div>
-            <p className="car-card-company">{car.company} • {car.bodyType} • {car.year}</p>
+             <p className="car-card-company">{car.company} • {car.bodyType} • {car.year}</p>
             <h3 className="car-card-name">{car.name}</h3>
           </div>
         </div>
@@ -68,7 +68,7 @@ const CarCard = ({ car }) => {
 
         
           <div className="car-card-price">
-            <span className="price-value">${car.price.toLocaleString()}</span>
+            <span className="price-value">KES {car.price.toLocaleString()}</span>
 
         <Link to={`/car/${car.id}`} className="car-card-cta">
           View Details

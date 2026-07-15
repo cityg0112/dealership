@@ -2,7 +2,6 @@ import { useParams, Link } from 'react-router-dom';
 import { useCars } from '../../context/CarContext';
 import ImageCarousel from '../../components/ImageCarousel/ImageCarousel';
 import InquiryForm from '../../components/InquiryForm/InquiryForm';
-import { getImageUrl } from '../../utils/helpers';
 import './CarDetails.css';
 
 const CarDetails = () => {
@@ -24,23 +23,28 @@ const CarDetails = () => {
       <div className="car-details-header">
         <Link to="/inventory" className="back-btn">← Back to Inventory</Link>
         <h1>{car.name}</h1>
-        <p className="car-subtitle">{car.company} • {car.bodyType}</p>
+        <p className="car-subtitle">{car.company} • {car.bodyType} • {car.year}</p>
       </div>
 
       <div className="car-details-content">
-        {/* LEFT SIDE: Image Carousel (replaces the single image) */}
         <div className="car-image-section">
           <ImageCarousel images={car.images} carName={car.name} />
         </div>
 
-        {/* RIGHT SIDE: Details and Form */}
         <div className="car-info-section">
           <div className="price-tag">
             <span className="price-label">Price</span>
-            <span className="price-value">${car.price.toLocaleString()}</span>
+            <span className="price-value">KES{car.price.toLocaleString()}</span>
           </div>
 
           <div className="specs-grid">
+            <div className="spec-item">
+              <span className="spec-icon">📅</span>
+              <div>
+                <p className="spec-label">Year</p>
+                <p className="spec-value">{car.year}</p>
+              </div>
+            </div>
             <div className="spec-item">
               <span className="spec-icon">🐎</span>
               <div>
@@ -90,7 +94,6 @@ const CarDetails = () => {
             <p>{car.description}</p>
           </div>
 
-          {/* The Inquiry Form */}
           <InquiryForm carName={car.name} />
         </div>
       </div>

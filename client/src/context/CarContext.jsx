@@ -1,5 +1,6 @@
 import { createContext, useState, useContext, useEffect } from 'react';
 import api from '../services/api';
+import dummyCars from '../data/dummyCars';
 
 const CarContext = createContext();
 
@@ -7,15 +8,19 @@ export const CarProvider = ({ children }) => {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 1. FETCH cars from backend on initial load
+  // 1. FETCH cars from backend on initial load, with fallback to dummy data
   useEffect(() => {
     const fetchCars = async () => {
       try {
         const response = await api.get('/cars');
-        setCars(response.data);
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setCars(response.data);
+        } else {
+          setCars(dummyCars);
+        }
       } catch (error) {
         console.error('Error fetching cars:', error);
-        alert('Failed to load cars from server. Make sure the backend is running on port 5001.');
+        setCars(dummyCars);
       } finally {
         setLoading(false);
       }
@@ -31,7 +36,6 @@ export const CarProvider = ({ children }) => {
       return response.data;
     } catch (error) {
       console.error('Error adding car:', error);
-      alert('Failed to add car. Please try again.');
       throw error;
     }
   };
@@ -44,7 +48,6 @@ export const CarProvider = ({ children }) => {
       return response.data;
     } catch (error) {
       console.error('Error updating car:', error);
-      alert('Failed to update car. Please try again.');
       throw error;
     }
   };
@@ -56,7 +59,6 @@ export const CarProvider = ({ children }) => {
       setCars(cars.filter(car => car.id !== id));
     } catch (error) {
       console.error('Error deleting car:', error);
-      alert('Failed to delete car. Please try again.');
       throw error;
     }
   };
