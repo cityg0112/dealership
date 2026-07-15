@@ -13,6 +13,7 @@ const Admin = () => {
 
   const [editingId, setEditingId] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notification, setNotification] = useState(null);
 
   const [formData, setFormData] = useState({
     company: '', bodyType: '', name: '', year: '', price: '',
@@ -35,6 +36,11 @@ const Admin = () => {
     navigate('/login');
     return null;
   }
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const resetForm = () => {
     setFormData({
@@ -72,29 +78,48 @@ const Admin = () => {
 
   const handleFileUpload = async (id, file) => {
     if (!file) return;
+
+    console.log('Starting upload for file:', file.name);
     const preview = URL.createObjectURL(file);
     updateImageSlot(id, { file, preview, status: 'uploading' });
+
     const formDataUpload = new FormData();
     formDataUpload.append('images', file);
+
     try {
-      const response = await api.post('/upload', formDataUpload, { headers: { 'Content-Type': 'multipart/form-data' } });
-      updateImageSlot(id, { path: response.data.images[0], status: 'success' });
+      const response = await api.post('/upload', formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      console.log('Upload success:', response.data);
+      const serverPath = response.data.images[0];
+      updateImageSlot(id, { path: serverPath, status: 'success' });
+      showNotification('✅ Image uploaded successfully!', 'success');
     } catch (error) {
       console.error('Upload failed:', error);
       updateImageSlot(id, { status: 'error' });
+      showNotification('❌ Image upload failed. Click "Retry" to try again.', 'error');
     }
   };
 
   const retryUpload = async (imgObj) => {
+    console.log('Retrying upload for:', imgObj.file.name);
     updateImageSlot(imgObj.id, { status: 'uploading' });
+
     const formDataUpload = new FormData();
     formDataUpload.append('images', imgObj.file);
+
     try {
-      const response = await api.post('/upload', formDataUpload, { headers: { 'Content-Type': 'multipart/form-data' } });
-      updateImageSlot(imgObj.id, { path: response.data.images[0], status: 'success' });
+      const response = await api.post('/upload', formDataUpload, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      console.log('Retry success:', response.data);
+      const serverPath = response.data.images[0];
+      updateImageSlot(imgObj.id, { path: serverPath, status: 'success' });
+      showNotification('✅ Image uploaded successfully on retry!', 'success');
     } catch (error) {
       console.error('Retry failed:', error);
       updateImageSlot(imgObj.id, { status: 'error' });
+      showNotification('❌ Retry failed. Please check your connection.', 'error');
     }
   };
 
@@ -105,9 +130,15 @@ const Admin = () => {
       cc: car.cc, hp: car.hp, engineType: car.engineType, mileage: car.mileage,
       fuelType: car.fuelType, transmission: car.transmission, description: car.description
     });
+
     const normalizedImages = car.images.map((imgUrl, index) => ({
-      id: Date.now() + index, mode: 'url', urlValue: imgUrl, file: null,
-      preview: getImageUrl(imgUrl), path: imgUrl, status: 'success'
+      id: Date.now() + index,
+      mode: 'url',
+      urlValue: imgUrl,
+      file: null,
+      preview: getImageUrl(imgUrl),
+      path: imgUrl,
+      status: 'success'
     }));
     setImages(normalizedImages);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -115,21 +146,28 @@ const Admin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (images.some(img => img.status === 'error' || img.status === 'uploading')) {
-      alert('Please wait for all uploads to finish, or retry/remove failed images.');
+    console.log('Form submitted');
+
+    const hasErrors = images.some(img => img.status === 'error' || img.status === 'uploading');
+    if (hasErrors) {
+      showNotification('⚠️ Please wait for all image uploads to finish, or remove/retry the failed images.', 'warning');
       return;
     }
+    
     if (images.length === 0) {
-      alert('Please add at least one image (URL or Upload).');
+      showNotification('⚠️ Please add at least one image (URL or Upload) before saving.', 'warning');
       return;
     }
+
     setIsSubmitting(true);
 
-    const finalImageUrls = images.map(img => img.mode === 'url' ? img.urlValue : img.path).filter(Boolean);
+    const finalImageUrls = images.map(img =>
+      img.mode === 'url' ? img.urlValue : img.path
+    ).filter(Boolean);
 
     const carData = {
       ...formData,
-      year: parseInt(formData.year), // <-- SAVES YEAR AS NUMBER
+      year: parseInt(formData.year),
       price: parseFloat(formData.price),
       cc: parseInt(formData.cc),
       hp: parseInt(formData.hp),
@@ -138,16 +176,18 @@ const Admin = () => {
     };
 
     try {
+      console.log('Saving car data:', carData);
       if (editingId) {
         await updateCar(editingId, carData);
-        alert('Vehicle updated successfully!');
+        showNotification('✅ Vehicle updated successfully!', 'success');
       } else {
         await addCar(carData);
-        alert('Vehicle added successfully!');
+        showNotification('✅ Vehicle added successfully!', 'success');
       }
       resetForm();
     } catch (error) {
       console.error('Failed to save car:', error);
+      showNotification('❌ Failed to save vehicle. Please check your internet connection and try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -155,6 +195,14 @@ const Admin = () => {
 
   return (
     <div className="admin-page">
+      {/* Inline Notification */}
+      {notification && (
+        <div className={`admin-notification admin-notification-${notification.type}`}>
+          <span>{notification.message}</span>
+          <button onClick={() => setNotification(null)}>✕</button>
+        </div>
+      )}
+
       <div className="admin-header">
         <h1>Admin Dashboard</h1>
         <p>Manage your LOOP AUTOCAT vehicle inventory</p>
@@ -183,7 +231,6 @@ const Admin = () => {
               <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="e.g. Land Cruiser" required />
             </div>
 
-            {/* YEAR FIELD ADDED HERE */}
             <div className="form-group">
               <label>Year of Manufacture</label>
               <input type="number" name="year" value={formData.year} onChange={handleChange} placeholder="e.g. 2022" min="1990" max="2030" required />
@@ -191,7 +238,7 @@ const Admin = () => {
 
             <div className="form-row">
               <div className="form-group">
-                <label>Price (KES)</label>
+                <label>Price ($)</label>
                 <input type="number" name="price" value={formData.price} onChange={handleChange} required />
               </div>
               <div className="form-group">
@@ -232,33 +279,61 @@ const Admin = () => {
 
             <div className="form-group">
               <label>Vehicle Images ({images.filter(img => img.status === 'success').length} added)</label>
+
               {images.map((img) => (
                 <div key={img.id} className="image-input-row">
                   <div className="image-mode-toggle">
-                    <label><input type="radio" name={`mode-${img.id}`} checked={img.mode === 'url'} onChange={() => updateImageSlot(img.id, { mode: 'url' })} /> URL</label>
-                    <label><input type="radio" name={`mode-${img.id}`} checked={img.mode === 'file'} onChange={() => updateImageSlot(img.id, { mode: 'file' })} /> Upload File</label>
+                    <label>
+                      <input type="radio" name={`mode-${img.id}`} checked={img.mode === 'url'} onChange={() => updateImageSlot(img.id, { mode: 'url' })} /> URL
+                    </label>
+                    <label>
+                      <input type="radio" name={`mode-${img.id}`} checked={img.mode === 'file'} onChange={() => updateImageSlot(img.id, { mode: 'file' })} /> Upload File
+                    </label>
                   </div>
+
                   <div className="image-input-content">
                     {img.mode === 'url' ? (
-                      <input type="url" placeholder="https://example.com/image.jpg" value={img.urlValue} onChange={(e) => updateImageSlot(img.id, { urlValue: e.target.value, preview: e.target.value, status: 'success' })} />
+                      <input
+                        type="url"
+                        placeholder="https://example.com/image.jpg"
+                        value={img.urlValue}
+                        onChange={(e) => updateImageSlot(img.id, { urlValue: e.target.value, preview: e.target.value, status: 'success' })}
+                      />
                     ) : (
-                      <input type="file" accept="image/*" onChange={(e) => handleFileUpload(img.id, e.target.files[0])} disabled={img.status === 'uploading'} />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleFileUpload(img.id, e.target.files[0])}
+                        disabled={img.status === 'uploading'}
+                      />
                     )}
                     <button type="button" className="remove-image-btn" onClick={() => removeImage(img.id)}>✕</button>
                   </div>
+
                   <div className="image-preview-container">
-                    {img.status === 'uploading' && <span className="status-badge uploading">Uploading...</span>}
-                    {img.status === 'error' && (
-                      <>
-                        <span className="status-badge error">Failed</span>
-                        <button type="button" className="retry-btn" onClick={() => retryUpload(img)}>🔄 Retry</button>
-                      </>
+                    {img.status === 'uploading' && (
+                      <div className="upload-status uploading">
+                        <span>⏳ Uploading...</span>
+                      </div>
                     )}
-                    {img.preview && <img src={img.preview} alt="Preview" className="image-preview-thumb" />}
+                    {img.status === 'error' && (
+                      <div className="upload-status error">
+                        <span>❌ Failed</span>
+                        <button type="button" className="retry-btn" onClick={() => retryUpload(img)}>
+                          🔄 Retry Upload
+                        </button>
+                      </div>
+                    )}
+                    {img.preview && (
+                      <img src={img.preview} alt="Preview" className="image-preview-thumb" />
+                    )}
                   </div>
                 </div>
               ))}
-              <button type="button" className="add-image-btn" onClick={addImageSlot}>+ Add Another Image</button>
+
+              <button type="button" className="add-image-btn" onClick={addImageSlot}>
+                + Add Another Image
+              </button>
             </div>
 
             <div className="form-group">
@@ -267,7 +342,9 @@ const Admin = () => {
             </div>
 
             <div className="form-actions">
-              {editingId && <button type="button" className="cancel-btn" onClick={resetForm}>Cancel Edit</button>}
+              {editingId && (
+                <button type="button" className="cancel-btn" onClick={resetForm}>Cancel Edit</button>
+              )}
               <button type="submit" className="admin-submit-btn" disabled={isSubmitting}>
                 {isSubmitting ? 'Saving...' : (editingId ? 'Update Vehicle' : 'Add Vehicle')}
               </button>
@@ -284,7 +361,7 @@ const Admin = () => {
                 <div className="admin-car-info">
                   <h4>{car.name}</h4>
                   <p>{car.company} • {car.bodyType} • {car.year}</p>
-                  <span className="admin-car-price">KES{car.price.toLocaleString()}</span>
+                  <span className="admin-car-price">${car.price.toLocaleString()}</span>
                 </div>
                 <div className="admin-car-actions">
                   <button className="edit-btn" onClick={() => handleEdit(car)}>Edit</button>

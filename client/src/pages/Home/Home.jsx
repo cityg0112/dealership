@@ -89,7 +89,7 @@ const Home = () => {
             style={{ flex: '1', minWidth: '200px', padding: '14px', borderRadius: '8px', border: '1px solid #444', background: '#1a1a1a', color: '#fff', fontSize: '1rem' }}
           />
           
-          <button type="submit" className="hero-search search-btn" style={{ padding: '14px 40px', borderRadius: '8px', border: 'none', background: '#DAA428', color: '#000', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', transition: 'all 0.3s ease' }}>
+          <button type="submit" className="hero-search search-btn" style={{ padding: '14px 40px', borderRadius: '8px', border: 'none', background: '#DAA428', color: '#000', fontWeight: 'bold', fontSize: '1rem', cursor: 'pointer', transition: 'all 0.3s ease' ,display:"flex",justifyContent:"center",alignItems:"center"}}>
             Search
           </button> 
         </form>
